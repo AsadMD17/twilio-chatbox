@@ -1,0 +1,42 @@
+<div class="chatbot-popup" id="chatbot-popup" style="display:block;">
+  <div class="chat-header">
+    <span>Proof A - Message Window</span>
+    <button id="close-btn" (click)="closePopup()">&times;</button>
+  </div>
+  <div class="chat-box-container">
+    <div class="chat-box" id="chat-box">
+      @for (message of messages; track message.contentSid) {
+        @if( currentUser === message.author) {
+          <div class="user-message">{{ message.body}}<div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+        }@else {
+          <div class="bot-message"> {{ message.body}} <div class="message-sender"> {{message.author}}</div><div class="message-time"> {{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+        }
+      } @empty {
+        <li>There are no items.</li>
+      }
+
+
+
+
+<!--      <div class="user-message user2-message-bg">sss<div class="message-sender">Akash</div><div class="message-time">29-03-2024 10:23 AM</div></div></div>-->
+
+  </div>
+  <div class="chat-input">
+    <div id="btn_toggleActive">
+      <button type="button" id="chat_tab_btn" class="chat-button check-toggleActive-btn button-active" onclick="clickChat()">Chat</button>
+      <button type="button" id="note_tab_btn" class="chat-button check-toggleActive-btn" onclick="clickNote()">Notes</button>
+
+<!--      <input  id='' type="text" [(ngModel)]="messageInput" class="text-center w-full p-1 focus:outline-none " placeholder="Please enter your message..." required/>-->
+       <textarea  id="user-input"  [(ngModel)]="messageInput" rows="4" cols="50" placeholder="Please enter your message..."></textarea>
+    </div>
+    <div class="revision_request">
+      <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+      <label for="vehicle1">Revision Request</label><br>
+      <div>
+        <div style="text-align: right;" >
+          <button id="send-btn" (click)="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

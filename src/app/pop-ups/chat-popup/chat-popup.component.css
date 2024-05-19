@@ -1,19 +1,3 @@
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-button.on {
-  background-color: green;
-}
-
-
 .cht-w {
   font-family: "Poppins", sans-serif;
   margin: 0;
@@ -49,7 +33,7 @@ button.on {
   background-color: #0074CC;
 }
 
-.cht-w .chatbot-popup {
+.chatbot-popup {
   position: fixed;
   bottom: 90px;
   right: 20px;
@@ -61,7 +45,7 @@ button.on {
   z-index: 1000;
 }
 
-.cht-w .chat-header {
+.chat-header {
   font-family: 'Poppins';
   background-color: #e3e3e3;
   color: #000;
@@ -73,7 +57,7 @@ button.on {
   align-items: center;
 }
 
-.cht-w #close-btn {
+#close-btn {
   background-color: transparent;
   border: none;
   color: #000;
@@ -81,11 +65,11 @@ button.on {
   cursor: pointer;
 }
 
-.cht-w .chat-box-container{
+.chat-box-container{
   padding-right: 20px;
 }
 
-.cht-w .chat-box {
+.chat-box {
   max-height: 180px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -93,36 +77,36 @@ button.on {
 }
 
 /* width */
-.cht-w .chat-box::-webkit-scrollbar {
+.chat-box::-webkit-scrollbar {
   width: 5px;
 }
 
 /* Track */
-.cht-w .chat-box::-webkit-scrollbar-track {
+.chat-box::-webkit-scrollbar-track {
   box-shadow: inset 0 0 2px transparent;
   border-radius: 5px;
   padding: 20px;
 }
 
 /* Handle */
-.cht-w .chat-box::-webkit-scrollbar-thumb {
+.chat-box::-webkit-scrollbar-thumb {
   background: #6caad9;
   border-radius: 10px;
 }
 
 /* Handle on hover */
-.cht-w .chat-box::-webkit-scrollbar-thumb:hover {
+.chat-box::-webkit-scrollbar-thumb:hover {
   background: #69b9f6;
 }
 
 
 
-.cht-w .chat-input {
+.chat-input {
   padding: 10px 20px;
   border-top: 1px solid #ddd;
 }
 
-.cht-w .chat-button{
+.chat-button{
   font-family: "Poppins";
   border: none;
   background-color: #ffff;
@@ -130,24 +114,24 @@ button.on {
   cursor: pointer;
 }
 
-.cht-w .button-active{
+.button-active{
   border: none;
   color: #2f1df9;
   border-bottom: 3px solid #2f1df9;
 }
 
-.cht-w .chat-button:hover{
+.chat-button:hover{
   border: none;
   color: #1c0ae7;
 }
 
-.cht-w .revision_request{
+.revision_request{
   padding-top: 10px;
   font-size: 14px;
   color: #545454;
 }
 
-.cht-w #user-input {
+#user-input {
   font-family: "Poppins";
   padding: 10px;
   border: 1px solid #ddd;
@@ -162,7 +146,7 @@ button.on {
 
 }
 
-.cht-w #send-btn {
+#send-btn {
   font-family: "Poppins", sans-serif;
   padding: 10px 20px;
   border: none;
@@ -174,11 +158,11 @@ button.on {
   transition: background-color 0.3s ease;
 }
 
-.cht-w #send-btn:hover {
+#send-btn:hover {
   background-color: #0074CC;
 }
 
-.cht-w .user-message {
+.user-message {
   font-family:"Poppins", sans-serif;
   background-color: #f3f3f3;
   color: #333;
@@ -194,7 +178,7 @@ button.on {
 
 }
 
-.cht-w .message-sender {
+.message-sender {
   position: absolute;
   top: 5px;
   left: 5px;
@@ -203,7 +187,8 @@ button.on {
   padding-left: 8px;
   padding-top: 2px;
 }
-.cht-w .message-time {
+
+.message-time {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -213,7 +198,7 @@ button.on {
   padding-top: 2px;
 }
 
-.cht-w .user2-message {
+.user2-message {
   font-family:"Poppins", sans-serif;
   background-color: #fef9a7;
   color: #333;
@@ -229,11 +214,11 @@ button.on {
   word-wrap: break-word;
 }
 
-.cht-w .user2-message-bg {
+.user2-message-bg {
   background-color: #fef9a7!important;
 }
 
-.cht-w .bot-message {
+.bot-message {
   font-family:"Poppins", sans-serif;
   background-color: #aceba5;
   color: #565555;
