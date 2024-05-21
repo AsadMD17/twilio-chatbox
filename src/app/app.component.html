@@ -1,12 +1,12 @@
 <div>
-  <button (click)="userToggle()" [class.on]="isAdmin">{{ isAdmin ? 'User' : 'Customer' }}</button>
+  <button (click)="userToggle()" [class.on]="isAdmin">{{ isAdmin ? 'Support Assistant' : 'Josh' }}</button>
 </div>
 
 <div class="cht-w">
   <button id="chatbot-toggle-btn" (click)="toggleChatPopup()">Start Chat</button>
 
   @if (viewChatPopup) {
-    <app-chat-popup  (closePopupCalled)="toggleChatPopup()"  [twilioToken]="twilioToken"  [currentUser]="isAdmin ? 'admin' : 'user'" >
+    <app-chat-popup  (closePopupCalled)="toggleChatPopup()"  [twilioToken]="twilioToken"  [currentUser]="isAdmin ? 'Support Assistant' : 'Josh'" >
     </app-chat-popup>
   }
 </div>
