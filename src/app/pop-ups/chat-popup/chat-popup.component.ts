@@ -26,6 +26,15 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   messages!: Message[];
   paginator!: Paginator<Message>;
   messageInput :string = '';
+  selectedFile: any;
+  documentUrls: any = {};
+  previewableContentTypes = [
+    'image/jpeg',
+    'image/png',]
+  currentWindow = 'chat';
+  chatConversationName = 'joshSupport'
+  noteConversationName = 'AmytestconvNotes'
+
 
   constructor(
     private twilioService: TwilioService,
@@ -36,14 +45,22 @@ export class ChatPopupComponent implements OnInit, OnChanges{
     this.store.activeConversation.subscribe(conversation => {
       this.myConversations[0] = conversation;
       if( Object.keys(this.myConversations[0]).length !== 0) {
+        console.log(this.myConversations[0].uniqueName);
         this.myConversations[0].getMessages()
           .then(paginator => {
             this.paginator = paginator;
             this.messages = paginator.items;
           });
         this.myConversations[0]?.on('messageAdded', (message: Message) => {
-          this.messages.push(message);
-          console.log('message', this.messages);
+          this.messages?.push(message);
+          if (this.messages[this.messages.length - 1].type === 'media'){
+            this.messages[this.messages.length - 1].getTemporaryContentUrlsForAttachedMedia().then((url) => {
+              const keys = Object.keys(url)
+              for (const [key, value] of url.entries()) {
+                this.documentUrls[message.sid] = value;
+              }
+            })
+          }
         });
       }
     });
@@ -80,18 +97,18 @@ export class ChatPopupComponent implements OnInit, OnChanges{
     if (this.myConversations.length === 0){
       try {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const conversation: Conversation = await this.twilioService.createConversation('Amytestconv',this.twilioToken);
+        const conversation: Conversation = await this.twilioService.createConversation(this.chatConversationName,this.twilioToken);
         this.myConversations.unshift(conversation);
       } catch (error) {
         console.log(error);
         console.log('String(error)');
       } finally {
-        await this.addParticipant('user');
+        await this.addParticipant('Josh');
       }
       console.log('conversation')
       // this.addParticipant('user')
     }
-    await this.addParticipant('user');
+    await this.addParticipant('Josh');
   }
 
   async addParticipant(user_name :string) {
@@ -147,13 +164,45 @@ export class ChatPopupComponent implements OnInit, OnChanges{
         this.messages = paginator.items;
       }).then(()=>{
         this.messages.map(( message )=>{
-          console.log(message.body);
-        })
-      console.log(this.participants[0]);
-      console.log(this.participants[0]?.lastReadMessageIndex);
+          if (message.type == 'media'){
+            message.getTemporaryContentUrlsForAttachedMedia().then((url) => {
+              const keys = Object.keys(url)
+              for (const [key, value] of url.entries()) {
+                this.documentUrls[message.sid] = value;
+              }
+              console.log(this.documentUrls);
+            })
+          }
 
+         });
     });
    }
 
+  getMessageMedia(messageSid :string) :string {
+    return this.documentUrls[messageSid];
+  }
+  uploadFile(event: Event) {
+    // @ts-ignore
+    const fileInput = event.target;
+    // @ts-ignore
+    const file = fileInput.files[0];
+    console.log(file)
+    this.myConversations[0].sendMessage({
+      contentType: file.type,
+      media: file,
+    })
+  }
 
+
+  isPreviewable(contentType: string ): boolean{
+     return this.previewableContentTypes.includes(contentType);
+  }
+
+  clickChat() {
+    this.currentWindow ='chat';
+  }
+
+  clickNote() {
+    this.currentWindow ='note';
+  }
 }

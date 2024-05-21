@@ -30,6 +30,19 @@ export class TwilioService {
     })
   }
 
+  getConversationByUniqueName(token: string, name: string){
+    const client = new Client(token);
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<Conversation> (async (resolve, reject) => {
+      let paginator: Paginator<Conversation>;
+      try {
+        const resp = await client.getConversationByUniqueName(name);
+        resolve(resp);
+      } catch (error) {
+        reject('Can not get user conversations');
+      }
+    })
+  }
 
   createConversation(room: string, token: string): Promise<Conversation> {
     const client = new Client(token);
