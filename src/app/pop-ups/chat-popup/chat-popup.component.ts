@@ -53,12 +53,24 @@ export class ChatPopupComponent implements OnInit, OnChanges{
           });
         this.myConversations[0]?.on('messageAdded', (message: Message) => {
           this.messages?.push(message);
+          const container = document.getElementById('chat-box');
+          setTimeout(() => {
+            if(container) {
+              container.scrollTo(0, container.scrollHeight);
+            }
+          }, 200);
           if (this.messages[this.messages.length - 1].type === 'media'){
             this.messages[this.messages.length - 1].getTemporaryContentUrlsForAttachedMedia().then((url) => {
               const keys = Object.keys(url)
               for (const [key, value] of url.entries()) {
                 this.documentUrls[message.sid] = value;
               }
+              const container = document.getElementById('chat-box');
+              setTimeout(() => {
+                if(container) {
+                  container.scrollTo(0, container.scrollHeight);
+                }
+              }, 200);
             })
           }
         });
@@ -152,7 +164,10 @@ export class ChatPopupComponent implements OnInit, OnChanges{
       this.myConversations[0].sendMessage(this.messageInput)
         .then(() => {
           this.messageInput = '';
-     //     window.scrollTo(0, document.body.scrollHeight);
+          const container = document.getElementById('chat-box');
+          if(container) {
+            container.scrollTo(0, container.scrollHeight);
+          }
         });
     }
   }
@@ -175,6 +190,10 @@ export class ChatPopupComponent implements OnInit, OnChanges{
           }
 
          });
+         const container = document.getElementById('chat-box');
+         if(container) {
+           container.scrollTo(0, container.scrollHeight);
+         }
     });
    }
 
@@ -190,6 +209,11 @@ export class ChatPopupComponent implements OnInit, OnChanges{
     this.myConversations[0].sendMessage({
       contentType: file.type,
       media: file,
+    }).then(res => {
+      const container = document.getElementById('chat-box');
+      if(container) {
+        container.scrollTo(0, container.scrollHeight);
+      }
     })
   }
 

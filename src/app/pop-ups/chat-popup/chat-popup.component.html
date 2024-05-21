@@ -11,11 +11,17 @@
             @if(message.type === 'media'){
               <div class="user-message user2-message-bg"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
             } @else {
+
               <div class="user-message user2-message-bg ">{{ message.body}}<div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
             }
 
           }@else {
-            <div class="bot-message"> {{ message.body}} <div class="message-sender"> {{message.author}}</div><div class="message-time"> {{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+            @if(message.type === 'media'){
+              <div class="bot-message"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+            }
+            @else {
+              <div class="bot-message"> {{ message.body}} <div class="message-sender"> {{message.author}}</div><div class="message-time"> {{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+            }
           }
         } @empty {
           <li>There are no items.</li>
