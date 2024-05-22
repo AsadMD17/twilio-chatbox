@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Client, Conversation, Paginator } from '@twilio/conversations';
-import { Observable } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Client, Conversation, Paginator} from '@twilio/conversations';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -30,18 +30,13 @@ export class TwilioService {
     })
   }
 
-  getConversationByUniqueName(token: string, name: string){
+  async getConversationByUniqueName(token: string, name: string): Promise<Conversation> {
     const client = new Client(token);
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise<Conversation> (async (resolve, reject) => {
-      let paginator: Paginator<Conversation>;
-      try {
-        const resp = await client.getConversationByUniqueName(name);
-        resolve(resp);
-      } catch (error) {
-        reject('Can not get user conversations');
-      }
-    })
+    try {
+      return await client.getConversationByUniqueName(name);
+    } catch (error) {
+      throw new Error('Conversation not found');
+    }
   }
 
   createConversation(room: string, token: string): Promise<Conversation> {
