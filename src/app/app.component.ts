@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   twilioToken = '';
   isAdmin = true;
   users = ['Michal.User', 'Josh.Support', 'Ede.Team', 'Dany.Team']
-  conversationName = 'myTestConversation1'
+  conversationName = 'myTestConversation10'
   currentConversation :any = null;
   currentUser = '';
   participants :Participant[] = []
@@ -50,15 +50,28 @@ export class AppComponent implements OnInit {
         const conversation = await this.findConversation(token);
         if (conversation) {
           console.log('conversation Found')
-           this.currentConversation= conversation;
+          this.currentConversation= conversation;
+          this.store.setActiveConversation(conversation);
+          await this.getParticipants().then(()=>{
+             //console.log(this.participants);
+            this.participants.forEach((participant)=>{
+              console.log(participant.identity);
+            });
+           });
         }else {
           console.log('conversation Not Found');
           console.log('creating Conversation')
-          await this.createConversation(token)
-
+          await this.createConversation(token).then(async () => {
+            await this.getParticipants().then(() => {
+              this.participants.forEach((participant)=>{
+                console.log(participant.sid);
+              });
+            });
+          })
         }
       });
      console.log(this.currentConversation);
+     console.log(this.participants);
   }
 
   async getTwilioToken(name: string) {
@@ -76,7 +89,8 @@ export class AppComponent implements OnInit {
   loginAs(name: string) {
     console.log(name);
     this.currentUser = name;
-    this.getTwilioToken(name);
+    this.getTwilioToken(name).then(r => {
+    });
   }
 
   async findConversation(token: string): Promise<Conversation | null> {
@@ -109,11 +123,31 @@ export class AppComponent implements OnInit {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.currentConversation = await this.twilioService.createConversation(this.conversationName, token);
+      this.store.setActiveConversation(this.currentConversation);
     } catch (error) {
       console.log(error)
       console.log('Error in  creating Conversation');
     } finally {
+      for(const index in this.users) {
+        console.log('user name', this.users[index]);
+        await this.addParticipant(this.users[index])
+      }
     }
   }
+
+  async getParticipants()  {
+    try {
+      this.participants = await this.currentConversation?.getParticipants();
+    } catch (error) {
+      console.log(error)
+    }
+    finally {
+      // this.loading = false;
+    }
+  }
+
+
+
+
 
 }

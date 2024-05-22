@@ -36,7 +36,7 @@
   <button id="chatbot-toggle-btn" (click)="toggleChatPopup()">Start Chat</button>
 
   @if (viewChatPopup) {
-  <app-chat-popup (closePopupCalled)="toggleChatPopup()" [twilioToken]="twilioToken" [currentUser]="currentUser">
+  <app-chat-popup (closePopupCalled)="toggleChatPopup()" [twilioToken]="twilioToken" [currentUser]="currentUser" [currentConversation]="currentConversation">
   </app-chat-popup>
   }
 </div>

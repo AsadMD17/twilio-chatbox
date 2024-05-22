@@ -20,6 +20,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   @Output() closePopupCalled: EventEmitter<any> = new EventEmitter();
   @Input() twilioToken: string = '';
   @Input() currentUser: string = '';
+  @Input() currentConversation : any = null;
   myConversations: Conversation[] = [];
   participants :Participant[] = [];
   onChangeCount = 0;
@@ -36,22 +37,28 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   noteConversationName = 'AmytestconvNotes'
 
 
+
   constructor(
     private twilioService: TwilioService,
     private store: StoreService
   ) {}
 
   ngOnInit() {
+    if (this.currentUser.includes('Team') ){
+      this.currentWindow = 'note'
+    }
+
+
     this.store.activeConversation.subscribe(conversation => {
-      this.myConversations[0] = conversation;
-      if( Object.keys(this.myConversations[0]).length !== 0) {
-        console.log(this.myConversations[0].uniqueName);
-        this.myConversations[0].getMessages()
-          .then(paginator => {
+      this.currentConversation = conversation;
+      if( Object.keys(this.currentConversation).length !== 0) {
+        console.log(this.currentConversation.uniqueName);
+        this.currentConversation.getMessages()
+          .then((paginator: Paginator<Message>) => {
             this.paginator = paginator;
             this.messages = paginator.items;
           });
-        this.myConversations[0]?.on('messageAdded', (message: Message) => {
+        this.currentConversation?.on('messageAdded', (message: Message) => {
           this.messages?.push(message);
           const container = document.getElementById('chat-box');
           setTimeout(() => {
@@ -81,17 +88,11 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   ngOnChanges(changes: SimpleChanges) {
     if (changes['twilioToken'] && this.onChangeCount == 0 && this.twilioToken !==''){
       this.onChangeCount++;
-      this.getConversations().then((res:any)=>{
-        this.createConversation().then(()=>{
-          this.store.setActiveConversation(this.myConversations[0])
-          console.log('conversations', this.myConversations);
-        }).then(()=> {
-          this.getConversationMessages();
-
-        });
-      }).catch((err:any)=>{
-        console.log(err)
-      })
+      this.twilioService.getConversationByUniqueName(this.twilioToken, this.currentConversation.uniqueName).then((conversation) =>{
+        this.currentConversation = conversation;
+        this.store.setActiveConversation(conversation);
+        this.getConversationMessages()
+      });
     }
   }
 
@@ -106,7 +107,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   }
 
   async createConversation(){
-    if (this.myConversations.length === 0){
+    if (!this.currentConversation){
       try {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const conversation: Conversation = await this.twilioService.createConversation(this.chatConversationName,this.twilioToken);
@@ -134,7 +135,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
         }
         try {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          await this.myConversations[0].add(user_name);
+          await this.currentConversation.add(user_name);
         //   this.getParticipants();
         //   this.addParticipantInput.setValue('');
          } catch (error) {
@@ -149,7 +150,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
 
   async getParticipants() {
     try {
-      this.participants = await this.myConversations[0].getParticipants();
+      this.participants = await this.currentConversation.getParticipants();
     } catch (error) {
         console.log(error)
     }
@@ -161,7 +162,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   sendMessage() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (this.messageInput && this.messageInput.trim().length > 0) {
-      this.myConversations[0].sendMessage(this.messageInput)
+      this.currentConversation.sendMessage(this.messageInput)
         .then(() => {
           this.messageInput = '';
           const container = document.getElementById('chat-box');
@@ -173,8 +174,8 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   }
 
   getConversationMessages(){
-    this.myConversations[0].getMessages()
-      .then(paginator => {
+    this.currentConversation.getMessages()
+      .then((paginator: Paginator<Message>) => {
         this.paginator = paginator;
         this.messages = paginator.items;
       }).then(()=>{
@@ -195,7 +196,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
            container.scrollTo(0, container.scrollHeight);
          }
     });
-   }
+  }
 
   getMessageMedia(messageSid :string) :string {
     return this.documentUrls[messageSid];
@@ -206,10 +207,10 @@ export class ChatPopupComponent implements OnInit, OnChanges{
     // @ts-ignore
     const file = fileInput.files[0];
     console.log(file)
-    this.myConversations[0].sendMessage({
+    this.currentConversation.sendMessage({
       contentType: file.type,
       media: file,
-    }).then(res => {
+    }).then(() => {
       const container = document.getElementById('chat-box');
       if(container) {
         container.scrollTo(0, container.scrollHeight);

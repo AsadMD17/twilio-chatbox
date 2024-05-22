@@ -7,20 +7,28 @@
     <div class="chat-box" id="chat-box">
       @if(currentWindow == 'chat'){
         @for (message of messages; track message.contentSid) {
-          @if( currentUser === message.author) {
-            @if(message.type === 'media'){
-              <div class="user-message user2-message-bg"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+          @if( !(currentUser.includes('User') && message.author?.includes('Team'))  ){
+            @if( currentUser === message.author) {
+              @if(message.type === 'media'){
+                <div class="user-message user2-message-bg"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              } @else {
+
+                <div class="user-message user2-message-bg ">{{ message.body}}<div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              }
+            }@else if((message.author?.includes('Team'))){
+              @if(message.type === 'media'){
+                <div class="user-message"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              }
+              @else {
+                <div class="user-message"> {{ message.body}} <div class="message-sender"> {{message.author}}</div><div class="message-time"> {{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              }
             } @else {
-
-              <div class="user-message user2-message-bg ">{{ message.body}}<div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
-            }
-
-          }@else {
-            @if(message.type === 'media'){
-              <div class="bot-message"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
-            }
-            @else {
-              <div class="bot-message"> {{ message.body}} <div class="message-sender"> {{message.author}}</div><div class="message-time"> {{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              @if(message.type === 'media'){
+                <div class="bot-message"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              }
+              @else {
+                <div class="bot-message"> {{ message.body}} <div class="message-sender"> {{message.author}}</div><div class="message-time"> {{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              }
             }
           }
         } @empty {
@@ -28,17 +36,21 @@
         }
       } @else if (currentWindow==='note') {
         @for (message of messages; track message.contentSid) {
-          @if( currentUser === message.author) {
-            @if(message.type === 'media'){
-              <div class="user-message user2-message-bg"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
-            } @else {
-              <div class="user-message user2-message-bg ">{{ message.body}}<div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+          @if (!(message.author?.includes('User'))){
+              @if(message.type === 'media'){
+                <div class="user-message user2-message-bg"><img  [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg"><div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              } @else if (message.author?.includes('Team') ) {
+                <div class="user-message">{{ message.body}}<div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
+              } @else {
+                <div class="user-message user2-message-bg">{{ message.body}}<div class="message-sender">{{message.author}}</div><div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div></div>
             }
           }
-        } @empty {
+        }
+        @empty {
           <li>There are no items.</li>
         }
       }
+
 
 
 
@@ -48,8 +60,14 @@
   </div>
   <div class="chat-input">
     <div id="btn_toggleActive">
-      <button [class.button-active]="currentWindow == 'chat'" type="button" id="chat_tab_btn" class="chat-button check-toggleActive-btn" (click)="clickChat()">Chat</button>
-      <button [class.button-active]="currentWindow == 'note'" type="button" id="note_tab_btn" class="chat-button check-toggleActive-btn" (click)="clickNote()">Notes</button>
+      @if (currentUser.includes('Support') || currentUser.includes('User')){
+        <button [class.button-active]="currentWindow == 'chat'" type="button" id="chat_tab_btn" class="chat-button check-toggleActive-btn" (click)="clickChat()">Chat</button>
+      }
+      @if (currentUser.includes('Team') || currentUser.includes('Support')){
+        <button [class.button-active]="currentWindow == 'note'" type="button" id="note_tab_btn" class="chat-button check-toggleActive-btn" (click)="clickNote()">Notes</button>
+      }
+
+
 
 <!--      <input  id='' type="text" [(ngModel)]="messageInput" class="text-center w-full p-1 focus:outline-none " placeholder="Please enter your message..." required/>-->
        <textarea  id="user-input"  [(ngModel)]="messageInput" rows="4" cols="50" placeholder="Please enter your message..."></textarea>
