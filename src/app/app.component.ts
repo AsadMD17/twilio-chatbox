@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {ChatPopupComponent} from "./pop-ups/chat-popup/chat-popup.component";
-import {TwilioService} from "./shared/services/twilio.service";
+import { ChatPopupComponent } from "./pop-ups/chat-popup/chat-popup.component";
+import { TwilioService } from "./shared/services/twilio.service";
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -9,25 +9,25 @@ import {TwilioService} from "./shared/services/twilio.service";
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'twilio-chatbox';
   viewChatPopup = false;
   twilioToken = '';
-  isAdmin= true;
+  isAdmin = true;
 
 
   userToggle() {
     this.isAdmin = !this.isAdmin;
   }
-  constructor(private twilioService: TwilioService) {}
+  constructor(private twilioService: TwilioService) { }
 
-  toggleChatPopup(){
-     this.viewChatPopup = !this.viewChatPopup;
-   //  console.log(this.viewChatPopup);
-     if(this.viewChatPopup){
-       console.log(this.isAdmin)
-       this.isAdmin ? this.getTwilioToken('login1') : this.getTwilioToken('login2')
-     }
+  toggleChatPopup() {
+    this.viewChatPopup = !this.viewChatPopup;
+    // //  console.log(this.viewChatPopup);
+    // if (this.viewChatPopup) {
+    //   console.log(this.isAdmin)
+    //   this.isAdmin ? this.getTwilioToken('login1') : this.getTwilioToken('login2')
+    // }
   }
 
 
@@ -35,16 +35,25 @@ export class AppComponent implements OnInit{
 
   }
 
-  getTwilioToken(action: string){
-    this.twilioService.getAccessToken("tokenghah", action)
-      .subscribe(({token}) => {
+  getTwilioToken(action: string) {
+    this.twilioService.getAccessToken("token", action)
+      .subscribe(({ token }) => {
         if (token) {
-          this.twilioToken= token;
-      //    console.log(this.twilioToken);
+          this.twilioToken = token;
+             console.log(this.twilioToken);
         }
       });
   }
 
+
+
+  currentUser = '';
+
+  loginAs(name: string) {
+    console.log(name);
+    this.currentUser = name;
+    this.getTwilioToken(name);
+  }
 
 
 

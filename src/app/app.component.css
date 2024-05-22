@@ -25,8 +25,8 @@ button.on {
   /*height: 100vh;*/
 }
 
-.cht-w .chat-header a{
-  text-decoration:none;
+.cht-w .chat-header a {
+  text-decoration: none;
   color: white;
 }
 
@@ -81,7 +81,7 @@ button.on {
   cursor: pointer;
 }
 
-.cht-w .chat-box-container{
+.cht-w .chat-box-container {
   padding-right: 20px;
 }
 
@@ -122,7 +122,7 @@ button.on {
   border-top: 1px solid #ddd;
 }
 
-.cht-w .chat-button{
+.cht-w .chat-button {
   font-family: "Poppins";
   border: none;
   background-color: #ffff;
@@ -130,18 +130,18 @@ button.on {
   cursor: pointer;
 }
 
-.cht-w .button-active{
+.cht-w .button-active {
   border: none;
   color: #2f1df9;
   border-bottom: 3px solid #2f1df9;
 }
 
-.cht-w .chat-button:hover{
+.cht-w .chat-button:hover {
   border: none;
   color: #1c0ae7;
 }
 
-.cht-w .revision_request{
+.cht-w .revision_request {
   padding-top: 10px;
   font-size: 14px;
   color: #545454;
@@ -179,7 +179,7 @@ button.on {
 }
 
 .cht-w .user-message {
-  font-family:"Poppins", sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #f3f3f3;
   color: #333;
   padding: 14px;
@@ -203,6 +203,7 @@ button.on {
   padding-left: 8px;
   padding-top: 2px;
 }
+
 .cht-w .message-time {
   position: absolute;
   top: 5px;
@@ -214,7 +215,7 @@ button.on {
 }
 
 .cht-w .user2-message {
-  font-family:"Poppins", sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #fef9a7;
   color: #333;
   padding: 14px;
@@ -230,11 +231,11 @@ button.on {
 }
 
 .cht-w .user2-message-bg {
-  background-color: #fef9a7!important;
+  background-color: #fef9a7 !important;
 }
 
 .cht-w .bot-message {
-  font-family:"Poppins", sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #aceba5;
   color: #565555;
   padding: 14px;
@@ -251,3 +252,14 @@ button.on {
 }
 
 
+
+
+
+
+.w-buttons {
+  padding: 10px 20px;
+  margin: 5px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

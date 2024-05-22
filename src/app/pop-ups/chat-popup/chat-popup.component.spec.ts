@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+sniimport { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChatPopupComponent } from './chat-popup.component';
 
