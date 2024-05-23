@@ -57,9 +57,16 @@ export class ChatPopupComponent implements OnInit, OnChanges{
           .then((paginator: Paginator<Message>) => {
             this.paginator = paginator;
             this.messages = paginator.items;
+            const container = document.getElementById('chat-box');
+            if(container) {
+              container.scrollTo(0, container.scrollHeight);
+            }
           });
         this.currentConversation?.on('messageAdded', (message: Message) => {
-          this.messages?.push(message);
+          const messageExist = this.messages.filter(f => f.sid === message.sid);
+          if(!messageExist?.length){
+            this.messages?.push(message);
+          }
           const container = document.getElementById('chat-box');
           setTimeout(() => {
             if(container) {
@@ -160,9 +167,12 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   }
 
   sendMessage() {
+
+
+    const deleimiter = this.currentWindow == 'note' ? 'note' : 'chat';
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (this.messageInput && this.messageInput.trim().length > 0) {
-      this.currentConversation.sendMessage(this.messageInput)
+      this.currentConversation.sendMessage(this.messageInput, {messageType:deleimiter})
         .then(() => {
           this.messageInput = '';
           const container = document.getElementById('chat-box');
@@ -178,6 +188,10 @@ export class ChatPopupComponent implements OnInit, OnChanges{
       .then((paginator: Paginator<Message>) => {
         this.paginator = paginator;
         this.messages = paginator.items;
+        const container = document.getElementById('chat-box');
+        if(container) {
+          container.scrollTo(0, container.scrollHeight);
+        }
       }).then(()=>{
         this.messages.map(( message )=>{
           if (message.type == 'media'){
@@ -202,6 +216,8 @@ export class ChatPopupComponent implements OnInit, OnChanges{
     return this.documentUrls[messageSid];
   }
   uploadFile(event: Event) {
+    const deleimiter = this.currentWindow == 'note' ? 'note' : 'chat';
+
     // @ts-ignore
     const fileInput = event.target;
     // @ts-ignore
@@ -210,7 +226,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
     this.currentConversation.sendMessage({
       contentType: file.type,
       media: file,
-    }).then(() => {
+    }, {messageType:deleimiter}).then(() => {
       const container = document.getElementById('chat-box');
       if(container) {
         container.scrollTo(0, container.scrollHeight);

@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {ChatPopupComponent} from "./pop-ups/chat-popup/chat-popup.component";
-import {TwilioService} from "./shared/services/twilio.service";
-import {Conversation, Participant} from "@twilio/conversations";
-import {StoreService} from "./shared/services/store.service";
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { ChatPopupComponent } from "./pop-ups/chat-popup/chat-popup.component";
+import { TwilioService } from "./shared/services/twilio.service";
+import { Conversation, Participant } from "@twilio/conversations";
+import { StoreService } from "./shared/services/store.service";
 
 //import {StoreService} from "/shared/services/store.service";
 
@@ -20,10 +20,10 @@ export class AppComponent implements OnInit {
   twilioToken = '';
   isAdmin = true;
   users = ['Michal.User', 'Josh.Support', 'Ede.Team', 'Dany.Team']
-  conversationName = 'myTestConversation10'
-  currentConversation :any = null;
+  conversationName = 'myTestConversation32'
+  currentConversation: any = null;
   currentUser = '';
-  participants :Participant[] = []
+  participants: Participant[] = []
 
 
   userToggle() {
@@ -101,10 +101,10 @@ export class AppComponent implements OnInit {
     }
   }
 
-  async addParticipant(user_name :string) {
+  async addParticipant(user_name: string) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.twilioService.getAccessToken( user_name, 'login')
-      .subscribe(async ({token}) => {
+    this.twilioService.getAccessToken(user_name, 'login')
+      .subscribe(async ({ token }) => {
         try {
           await this.twilioService.getUserConversations(token);
         } catch (error) {
@@ -119,7 +119,7 @@ export class AppComponent implements OnInit {
       });
   }
 
-  async createConversation(token: string ){
+  async createConversation(token: string) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.currentConversation = await this.twilioService.createConversation(this.conversationName, token);
@@ -128,14 +128,14 @@ export class AppComponent implements OnInit {
       console.log(error)
       console.log('Error in  creating Conversation');
     } finally {
-      for(const index in this.users) {
+      for (const index in this.users) {
         console.log('user name', this.users[index]);
         await this.addParticipant(this.users[index])
       }
     }
   }
 
-  async getParticipants()  {
+  async getParticipants() {
     try {
       this.participants = await this.currentConversation?.getParticipants();
     } catch (error) {

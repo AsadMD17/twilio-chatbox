@@ -11,24 +11,33 @@
   }
 </div> -->
 
-@if(!currentUser.length){
+@if ( participants?.length) 
+{
 
-<div style="text-align: center; margin-top: 50px;">
-  <button class="w-buttons" style="background-color: #4CAF50;" (click)="loginAs('Michal.User')">Michal.User</button>
-  <button class="w-buttons" style="background-color: #008CBA;" (click)="loginAs('Josh.Support')">Josh.Support</button>
-  <button class="w-buttons" style="background-color: #f44336;" (click)="loginAs('Ede.Team')">Ede.Team</button>
-  <button class="w-buttons" style="background-color: #f44336;" (click)="loginAs('Dany.Team')">Dany.Team</button>
-</div>
+  @if(!currentUser.length){
+    
+  <h1 style="text-align: center;">Please Select a User</h1>
+    
+    <div style="text-align: center; margin-top: 50px;">
+      <button class="w-buttons" style="background-color: #4CAF50;" (click)="loginAs('Michal.User')">Michal.User</button>
+      <button class="w-buttons" style="background-color: #008CBA;" (click)="loginAs('Josh.Support')">Josh.Support</button>
+      <button class="w-buttons" style="background-color: #f44336;" (click)="loginAs('Ede.Team')">Ede.Team</button>
+      <button class="w-buttons" style="background-color: #f44336;" (click)="loginAs('Dany.Team')">Dany.Team</button>
+    </div>
+  }
+  
+}@else {
+  <h1 style="text-align: center;">Loading Participants</h1>
 }
-
 
 @if (twilioToken)
 {
 <div style="max-width: 100vw;">
-  <span>User Name = </span>
+  <h1 style="text-align: center;">{{currentUser}}</h1>
+  <!-- <span>User Name = </span>
   <p>{{currentUser}}</p>
   <span>User token = </span>
-  <p style="text-wrap: wrap;">{{twilioToken}}</p>
+  <p style="text-wrap: wrap;">{{twilioToken}}</p> -->
 </div>
 
 
