@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   twilioToken = '';
   isAdmin = true;
   users = ['Michal.User', 'Josh.Support', 'Ede.Team', 'Dany.Team']
-  conversationName = 'myTestConversation32'
+  conversationName = 'myTestConversation57'
   currentConversation: any = null;
   currentUser = '';
   participants: Participant[] = []

@@ -169,10 +169,10 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   sendMessage() {
 
 
-    const deleimiter = this.currentWindow == 'note' ? 'note' : 'chat';
+    const deleimiter = this.currentWindow == 'note' ? '__##__' : '';
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (this.messageInput && this.messageInput.trim().length > 0) {
-      this.currentConversation.sendMessage(this.messageInput, {messageType:deleimiter})
+      this.currentConversation.sendMessage(deleimiter + this.messageInput)
         .then(() => {
           this.messageInput = '';
           const container = document.getElementById('chat-box');
