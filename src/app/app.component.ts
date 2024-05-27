@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ChatPopupComponent } from "./pop-ups/chat-popup/chat-popup.component";
 import { TwilioService } from "./shared/services/twilio.service";
-import { Conversation, Participant } from "@twilio/conversations";
+import {Conversation, Participant} from "@twilio/conversations";
 import { StoreService } from "./shared/services/store.service";
-
-//import {StoreService} from "/shared/services/store.service";
 
 @Component({
   selector: 'app-root',
@@ -20,7 +18,7 @@ export class AppComponent implements OnInit {
   twilioToken = '';
   isAdmin = true;
   users = ['Michal.User', 'Josh.Support', 'Ede.Team', 'Dany.Team']
-  conversationName = 'myTestConversation57'
+  conversationName = 'myTestConversation30'
   currentConversation: any = null;
   currentUser = '';
   participants: Participant[] = []
@@ -36,49 +34,19 @@ export class AppComponent implements OnInit {
 
   toggleChatPopup() {
     this.viewChatPopup = !this.viewChatPopup;
-    // //  console.log(this.viewChatPopup);
-    // if (this.viewChatPopup) {
-    //   console.log(this.isAdmin)
-    //   this.isAdmin ? this.getTwilioToken('login1') : this.getTwilioToken('login2')
-    // }
   }
 
 
   async ngOnInit(): Promise<void> {
-    this.twilioService.getAccessToken( this.users[0], 'login')
-      .subscribe(async ({token}) => {
-        const conversation = await this.findConversation(token);
-        if (conversation) {
-          console.log('conversation Found')
-          this.currentConversation= conversation;
-          this.store.setActiveConversation(conversation);
-          await this.getParticipants().then(()=>{
-             //console.log(this.participants);
-            this.participants.forEach((participant)=>{
-              console.log(participant.identity);
-            });
-           });
-        }else {
-          console.log('conversation Not Found');
-          console.log('creating Conversation')
-          await this.createConversation(token).then(async () => {
-            await this.getParticipants().then(() => {
-              this.participants.forEach((participant)=>{
-                console.log(participant.sid);
-              });
-            });
-          })
-        }
-      });
-     console.log(this.currentConversation);
-     console.log(this.participants);
+
   }
 
   async getTwilioToken(name: string) {
     this.twilioService.getAccessToken(name, "login")
-      .subscribe(({ token }) => {
+      .subscribe(async ({token}) => {
         if (token) {
           this.twilioToken = token;
+          await this.initializeConversation(token)
           console.log(this.twilioToken);
         }
       });
@@ -146,6 +114,24 @@ export class AppComponent implements OnInit {
     }
   }
 
+  async initializeConversation(token: string){
+    const conversation = await this.findConversation(token);
+    if (conversation) {
+      console.log('conversation Found')
+      this.currentConversation= conversation;
+      this.store.setActiveConversation(conversation);
+      await this.getParticipants().then(()=>{
+      });
+    }else {
+      console.log('conversation Not Found');
+      console.log('creating Conversation')
+      await this.createConversation(token).then(async () => {
+        await this.getParticipants()
+      })
+    }
+    console.log(this.currentConversation);
+    console.log(this.participants);
+  }
 
 
 

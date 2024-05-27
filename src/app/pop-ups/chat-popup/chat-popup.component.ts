@@ -1,9 +1,10 @@
-import {Component, Output, EventEmitter, OnInit, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, Output, EventEmitter, OnInit, Input, OnChanges, SimpleChanges, input} from '@angular/core';
 import {TwilioService} from "../../shared/services/twilio.service";
-import {Conversation, Message, Paginator, Participant} from "@twilio/conversations";
+import {Conversation, Message, Paginator, Participant, User, UserUpdateReason} from "@twilio/conversations";
 import {FormsModule} from "@angular/forms";
 import {DatePipe} from "@angular/common";
 import {StoreService} from "../../shared/services/store.service";
+import {filter} from "rxjs";
 
 @Component({
   selector: 'app-chat-popup',
@@ -21,8 +22,9 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   @Input() twilioToken: string = '';
   @Input() currentUser: string = '';
   @Input() currentConversation : any = null;
-  myConversations: Conversation[] = [];
-  participants :Participant[] = [];
+  @Input() participants: Participant[] = [];
+  filteredParticipants:  string[]= [];
+  allParticipants: string[] = [];
   onChangeCount = 0;
   messages!: Message[];
   paginator!: Paginator<Message>;
@@ -33,10 +35,9 @@ export class ChatPopupComponent implements OnInit, OnChanges{
     'image/jpeg',
     'image/png',]
   currentWindow = 'chat';
-  chatConversationName = 'joshSupport'
-  noteConversationName = 'AmytestconvNotes'
 
-
+  participantsStatus = new Map<string, boolean>();
+  isAtKeyPressed: boolean = false;
 
   constructor(
     private twilioService: TwilioService,
@@ -48,10 +49,10 @@ export class ChatPopupComponent implements OnInit, OnChanges{
       this.currentWindow = 'note'
     }
 
-
     this.store.activeConversation.subscribe(conversation => {
       this.currentConversation = conversation;
-      if( Object.keys(this.currentConversation).length !== 0) {
+      if(Object.keys(this.currentConversation).length !== 0) {
+        this.userStatusListener();
         console.log(this.currentConversation.uniqueName);
         this.currentConversation.getMessages()
           .then((paginator: Paginator<Message>) => {
@@ -95,6 +96,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
   ngOnChanges(changes: SimpleChanges) {
     if (changes['twilioToken'] && this.onChangeCount == 0 && this.twilioToken !==''){
       this.onChangeCount++;
+      this.addUserStatuses();
       this.twilioService.getConversationByUniqueName(this.twilioToken, this.currentConversation.uniqueName).then((conversation) =>{
         this.currentConversation = conversation;
         this.store.setActiveConversation(conversation);
@@ -107,68 +109,7 @@ export class ChatPopupComponent implements OnInit, OnChanges{
       this.closePopupCalled.emit(null);
   }
 
-  async getConversations() :Promise<Conversation[]>  {
-    this.myConversations = await this.twilioService.getUserConversations(this.twilioToken);
-    console.log(this.myConversations)
-    return this.myConversations
-  }
-
-  async createConversation(){
-    if (!this.currentConversation){
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const conversation: Conversation = await this.twilioService.createConversation(this.chatConversationName,this.twilioToken);
-        this.myConversations.unshift(conversation);
-      } catch (error) {
-        console.log(error);
-        console.log('String(error)');
-      } finally {
-        await this.addParticipant('Josh');
-      }
-      console.log('conversation')
-      // this.addParticipant('user')
-    }
-    await this.addParticipant('Josh');
-  }
-
-  async addParticipant(user_name :string) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.twilioService.getAccessToken( user_name, 'login2')
-      .subscribe(async ({token}) => {
-        try {
-          await this.twilioService.getUserConversations(token);
-          token = '';
-        } catch (error) {
-        }
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          await this.currentConversation.add(user_name);
-        //   this.getParticipants();
-        //   this.addParticipantInput.setValue('');
-         } catch (error) {
-          // this.error = true;
-          // this.errorMessage = 'Can not add participant';
-        } finally {
-          //this.loading = false;
-        }
-      });
-
-  }
-
-  async getParticipants() {
-    try {
-      this.participants = await this.currentConversation.getParticipants();
-    } catch (error) {
-        console.log(error)
-    }
-    finally {
-     // this.loading = false;
-    }
-  }
-
   sendMessage() {
-
-
     const deleimiter = this.currentWindow == 'note' ? '__##__' : '';
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (this.messageInput && this.messageInput.trim().length > 0) {
@@ -245,5 +186,81 @@ export class ChatPopupComponent implements OnInit, OnChanges{
 
   clickNote() {
     this.currentWindow ='note';
+  }
+
+  addUserStatuses(){
+    if (this.participants) {
+      this.participants.forEach((async (participant)=> {
+        this.allParticipants.push(<string>participant.identity);
+        const user: User = await participant.getUser();
+        if(participant.identity && user.isOnline != null){
+          this.participantsStatus.set(participant.identity.toString(), user.isOnline);
+        }
+      }));
+    }
+    this.filteredParticipants = this.allParticipants
+  }
+
+
+  userStatusListener(){
+    if (this.participants) {
+      this.participants.forEach((async (participant)=>{
+        const user: User = await participant.getUser();
+
+        user.on('updated', ({ user, updateReasons}: {
+          user: User,
+          updateReasons: UserUpdateReason[]
+        }) => {
+          if (updateReasons.includes("reachabilityOnline")) {
+            if(participant.identity && user.isOnline != null){
+              this.participantsStatus.set(participant.identity.toString(), user.isOnline);
+              console.log(user.identity , user.isOnline);
+            }
+          }
+          console.log(this.participantsStatus);
+        })
+      }));
+    }
+  }
+
+  messageMediaType(message: Message){
+    return (message.attributes as any).messageType as string
+  }
+
+  protected readonly JSON = JSON;
+
+  checkForKeyPress(event: KeyboardEvent) {
+
+    const trimmedInput = this.messageInput.trim();
+    const lastWord = trimmedInput.split(/\s+/).pop();
+
+    // Return the last word from the array
+    if (event.key === '@' && lastWord?.at(0) == '@') {
+      this.isAtKeyPressed = true;
+    }else if (lastWord?.at(0) !== '@'){
+      this.filteredParticipants = this.allParticipants
+      this.isAtKeyPressed = false;
+    }
+
+    if (lastWord?.at(0) == '@'){
+      this.filterStrings(this.allParticipants,lastWord.substring(1))
+    }
+  }
+
+  filterStrings(list:string[], searchTerm: string): void {
+     const lowerCaseSearchTerm = searchTerm.toLowerCase();
+     this.filteredParticipants = list.filter(item => item.toLowerCase().includes(lowerCaseSearchTerm));
+  }
+
+
+  onDropDownParticipantClick(participant: string) {
+    const trimmedInput = this.messageInput.trim();
+    const wordsArray = trimmedInput.split(/\s+/);
+    wordsArray.pop();
+    let lastWord = ' @'+participant;
+    wordsArray.push(lastWord);
+    this.messageInput = wordsArray.join(' ');
+    this.messageInput = this.messageInput + ' ';
+    this.isAtKeyPressed= false;
   }
 }

@@ -11,13 +11,13 @@
   }
 </div> -->
 
-@if ( participants?.length) 
+@if (true || participants?.length)
 {
 
   @if(!currentUser.length){
-    
+
   <h1 style="text-align: center;">Please Select a User</h1>
-    
+
     <div style="text-align: center; margin-top: 50px;">
       <button class="w-buttons" style="background-color: #4CAF50;" (click)="loginAs('Michal.User')">Michal.User</button>
       <button class="w-buttons" style="background-color: #008CBA;" (click)="loginAs('Josh.Support')">Josh.Support</button>
@@ -25,7 +25,7 @@
       <button class="w-buttons" style="background-color: #f44336;" (click)="loginAs('Dany.Team')">Dany.Team</button>
     </div>
   }
-  
+
 }@else {
   <h1 style="text-align: center;">Loading Participants</h1>
 }
@@ -42,10 +42,10 @@
 
 
 <div class="cht-w">
-  <button id="chatbot-toggle-btn" (click)="toggleChatPopup()">Start Chat</button>
+  <button id="chatbot-toggle-btn" [disabled]="!participants?.length" (click)="toggleChatPopup()">{{!participants?.length ? 'Loading': 'Start'}} Chat</button>
 
   @if (viewChatPopup) {
-  <app-chat-popup (closePopupCalled)="toggleChatPopup()" [twilioToken]="twilioToken" [currentUser]="currentUser" [currentConversation]="currentConversation">
+  <app-chat-popup (closePopupCalled)="toggleChatPopup()" [twilioToken]="twilioToken" [currentUser]="currentUser" [currentConversation]="currentConversation" [participants]="participants" >
   </app-chat-popup>
   }
 </div>

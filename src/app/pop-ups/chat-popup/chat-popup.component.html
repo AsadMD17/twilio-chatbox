@@ -6,54 +6,75 @@
   <div class="chat-box-container">
     <div class="chat-box" id="chat-box">
         @for (message of messages; track message.contentSid) {
-          @if (currentWindow==='chat') 
-          {
-            <ng-container>
-              @if (
-                !(message.body?.includes('__##__') && currentUser?.includes('User'))
-              )
-              {
-              <div class="
+          <div class="message-container {{(message.author === currentUser || message.author?.includes('Team') || ( message.author?.includes('Support') && currentWindow == 'note' ))  ? 'message-container-right' : ''}}">
+
+            @if (currentWindow==='chat')
+            {
+              <ng-container>
+                @if (
+                  !((message.body?.includes('__##__') || messageMediaType(message) == 'note') && currentUser.includes('User') )
+                  )
+                {
+                  <div class="avatar-img-container"><img
+                    src="https://i2.wp.com/woodfibreinsulation.co.uk/wp-content/uploads/2017/04/blank-profile-picture-973460-1-1-1080x1080.png"
+                    class="chat-avatar-img">
+                    <div class="
+                      {{message.author === currentUser ? 'message-container-right' : 'avatar-online-dot'}}
+                      {{ message.author && participantsStatus.get(message.author) ? 'dot-green' : 'dot-yellow'}}
+                    ">
+                    </div> <!-- Add this line for the green dot -->
+                  </div>
+                  <div class="
                           {{message.author === currentUser ? 'message-position-right' : 'message-position-left'}}
                           {{message.author === currentUser ? 'message-color-yellow' : 'message-color-green'}}
-                          {{message.body?.includes('__##__') ? 'message-position-right message-color-grey' : ''}}
+                          {{message.body?.includes('__##__') && message.author?.includes('Team') ? 'message-position-right message-color-grey' : ''}}
                         ">
-                @if (message.type === 'media')
-                {
-                <img [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg">
-                }@else{
-                <span>{{ message?.body?.split('__##__')?.[1] || message?.body}}</span>
+                    @if (message.type === 'media')
+                    {
+                      <img [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg">
+                    }@else{
+                      <span>{{ message?.body?.split('__##__')?.[1] || message?.body}}</span>
+                    }
+                    <div class="message-sender">
+                      {{message.author == currentUser ? 'You' : message.author}}</div>
+                    <div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div>
+                  </div>
                 }
-                <div class="message-sender">
-                  {{message.author == currentUser ? 'You' : message.author}}</div>
-                <div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div>
-              </div>
-              }
-            </ng-container>
-          }
-          @else if (currentWindow==='note') {
-            <ng-container>
-              @if (
-                (!message.author?.includes('User') && message.body?.includes('__##__'))
-              )
-              {
-              <div class="
+              </ng-container>
+            }
+            @else if (currentWindow==='note') {
+              <ng-container>
+                @if (
+                  (!message.author?.includes('User') && message.body?.includes('__##__') || messageMediaType(message) == 'note')
+                  )
+                {
+                  <div class="avatar-img-container"><img
+                    src="https://i2.wp.com/woodfibreinsulation.co.uk/wp-content/uploads/2017/04/blank-profile-picture-973460-1-1-1080x1080.png"
+                    class="chat-avatar-img">
+                    <div class="
+                      {{message.author === currentUser ? 'message-container-right' : 'avatar-online-dot'}}
+                      {{ message.author && participantsStatus.get(message.author) ? 'dot-green' : 'dot-yellow'}}
+                    ">
+                    </div> <!-- Add this line for the green dot -->
+                  </div>
+                  <div class="
                           {{'message-position-right'}}
-                          {{'message-color-grey'}}
+                          {{message.author?.includes('Team') ? 'message-color-grey':'message-color-yellow'}}
                         ">
-                @if (message.type === 'media')
-                {
-                <img [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg">
-                }@else{
-                <span>{{ message?.body?.split('__##__')?.[1] || message?.body}}</span>
+                    @if (message.type === 'media')
+                    {
+                      <img [src]="getMessageMedia(message.sid)" alt="Icon" class="icon-img document-msg">
+                    }@else{
+                      <span>{{ message?.body?.split('__##__')?.[1] || message?.body}}</span>
+                    }
+                    <div class="message-sender">
+                      {{message.author == currentUser ? 'You' : message.author}}</div>
+                    <div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div>
+                  </div>
                 }
-                <div class="message-sender">
-                  {{message.author == currentUser ? 'You' : message.author}}</div>
-                <div class="message-time">{{message.dateCreated | date:'yyyy:mm:dd hh:mm aa'}}</div>
-              </div>
-              }
-            </ng-container>
-          }
+              </ng-container>
+            }
+          </div>
         } @empty {
         <li>There are no items.</li>
         }
@@ -76,7 +97,20 @@
 
 
 <!--      <input  id='' type="text" [(ngModel)]="messageInput" class="text-center w-full p-1 focus:outline-none " placeholder="Please enter your message..." required/>-->
-       <textarea  id="user-input"  [(ngModel)]="messageInput" rows="4" cols="50" placeholder="Please enter your message..."></textarea>
+       <textarea  id="user-input" (keyup)="checkForKeyPress($event)" [(ngModel)]="messageInput" rows="4" cols="50" placeholder="Please enter your message..."></textarea>
+      @if (isAtKeyPressed) {
+        <div id="suggestionPopover" class="popover popover-scrollbar" style="">
+          @for (participant of filteredParticipants; track participant) {
+            @if(participant !== currentUser ){
+              <li (click)="onDropDownParticipantClick(participant)" >
+                <img class="rounded-image" src="https://i2.wp.com/woodfibreinsulation.co.uk/wp-content/uploads/2017/04/blank-profile-picture-973460-1-1-1080x1080.png" alt="user"> <div class="avatar-online-dot-atr {{participantsStatus.get(participant) ? 'dot-green' : 'dot-yellow'}}"></div>
+                {{participant}}
+              </li>
+            }
+          }
+        </div>
+      }
+
     </div>
     <div class="revision_request">
       <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">

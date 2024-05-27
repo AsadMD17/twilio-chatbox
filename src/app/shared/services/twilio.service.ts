@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Client, Conversation, Paginator} from '@twilio/conversations';
+import {Client, Conversation, Paginator, User, UserUpdateReason} from '@twilio/conversations';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -13,6 +13,10 @@ export class TwilioService {
   getAccessToken(token: string, action: string): Observable<{token:string}> {
     return this.http.get<{token:string}>('http://localhost:4000/auth/token', {headers: { token, action }});
     //return this.http.get<{token:string}>('https://chat-server-tbcf.onrender.com/auth/token', {headers: { token, action }})
+  }
+
+  enableReachability(){
+    return this.http.get<{token:string}>('http://localhost:4000/enable/reachability', {});
   }
 
   // get user conversations
@@ -32,6 +36,7 @@ export class TwilioService {
 
   async getConversationByUniqueName(token: string, name: string): Promise<Conversation> {
     const client = new Client(token);
+    console.log('user',client.user);
     try {
       return await client.getConversationByUniqueName(name);
     } catch (error) {
@@ -41,6 +46,7 @@ export class TwilioService {
 
   createConversation(room: string, token: string): Promise<Conversation> {
     const client = new Client(token);
+    console.log(client.user);
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<Conversation>(async (resolve, reject) => {
       try {

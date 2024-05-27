@@ -260,18 +260,6 @@
   width: 100%;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 .user-message {
   font-family:"Poppins", sans-serif;
   background-color: #f3f3f3;
@@ -341,6 +329,7 @@
   padding-top: 30px;
   word-wrap: break-word;
   max-width: 70%;
+  width: 100%
 }
 
 .message-position-right {
@@ -349,14 +338,21 @@
   border-radius: 10px;
   margin-bottom: 15px;
   margin-top: 15px;
-  margin-left: 10px;
   position: relative;
   padding-top: 30px;
   word-wrap: break-word;
   max-width: 70%;
-  margin-left: auto;
+  width: 100%;
 }
 
+.message-container{
+  display: flex;
+  justify-content: start;
+}
+
+.message-container-right{
+  justify-content: end;
+}
 
 .message-color-green {
   background-color: #aceba5;
@@ -373,3 +369,119 @@
   background-color: #f3f3f3;
   color: #333;
 }
+
+
+.avatar-img-container {
+  align-self: center;
+  flex-shrink: 0; /* Prevent shrinking */
+  position: relative;
+}
+
+
+.chat-avatar-img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin: 0 10px 0px 0;
+  border: 1px solid #adadad;
+}
+
+
+.avatar-online-dot {
+  position: absolute;
+  bottom: 3px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+
+.avatar-online-dot-atr {
+  position: absolute;
+  bottom: 5px;
+  left: 25px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.dot-green {
+  background-color: green;
+}
+
+.dot-yellow {
+  background-color: #debe1a;
+}
+
+
+.chat-box::-webkit-scrollbar, .popover-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.chat-box::-webkit-scrollbar-track,.popover-scrollbar::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px transparent;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+/* Handle */
+.chat-box::-webkit-scrollbar-thumb, .popover-scrollbar::-webkit-scrollbar-thumb {
+  background: #6caad9;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.chat-box::-webkit-scrollbar-thumb:hover, .popover-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #69b9f6;
+}
+
+
+.popover {
+  display: block;
+  width: 280px;
+  max-height: 130px;
+  overflow-y: auto;
+  position: absolute;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  z-index: 1;
+}
+
+.popover ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.popover li {
+  display: flex;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 15px;
+  color: #888;
+  align-items: center;
+  position: relative;
+}
+
+.popover li:hover {
+  background-color: #e5e5e5;
+}
+
+
+.rounded-image{
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border: 1px solid #adadad;
+}
+
+
+
+
+
